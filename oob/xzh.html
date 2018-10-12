@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="referrer" content="always">
+<title>MIP 统一授权回调页</title>
+</head>
+<body>
+<script>
+(function () {
+    if (window.parent === window.self) {
+        console.error('当前窗口不在 iframe 中，无法进行授权。');
+        return;
+    }
+    var code = getArg('code');
+    var state = getArg('state');
+    var origin = getArg('origin');
+    if (!code || !state || !origin) {
+        console.error('缺少 code & state & origin，无法进行授权。');
+        sendMessage({
+            status: 'failed'
+        });
+        return;
+    }
+    if (!origin.match(/^https?:\/\/[a-zA-Z0-9.-]+.baidu.(com|mobi)(:\d+)?$/)) {
+        console.error('origin 不符合安全策略');
+        sendMessage({
+            status: 'unsecure'
+        });
+        return;
+    }
+    sendMessage({
+        status: 'success',
+        code: code,
+        state: state
+    }, origin);
+})();
+function sendMessage(data, origin) {
+    origin = origin || '*';
+    window.parent.postMessage({
+        event: 'login-xzh-oob',
+        data: data
+    }, origin);
+}
+function getArg(key) {
+    var regex = new RegExp('[&?]' + encodeURIComponent(key) + '=([^&#]+)');
+    var m = location.href.match(regex);
+    if (m) {
+        return decodeURIComponent(m[1]);
+    }
+    return undefined;
+}
+</script>
+</body>
+</html>
