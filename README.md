@@ -10,4 +10,4 @@
 - oob：out of band文件交互使用（支持跨域）
 - deps：jquery、zepto等静态文件
 
-以上静态文件存放于Cache的/static/(例如：https://c.mipcdn.com/static/）路径下。
+以上静态文件存放于Cache的`/static/` (例如：https://c.mipcdn.com/static/）路径下。
